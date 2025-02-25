@@ -34,7 +34,7 @@ class HopfieldNetwork:
         np.fill_diagonal(self.weights, 0) # w_{ii} = 0
 
         # normalization step => bc we keep adding the outer product
-        self.weights /= len(patterns) 
+        self.weights /= (len(patterns) * self.size)
     
 
     def sign(self, x):
@@ -68,16 +68,44 @@ class HopfieldNetwork:
         return -0.5 * np.dot(pattern.T, np.dot(self.weights, pattern))
     
 
-    def predict(self, input_pattern, max_steps=100, tolerance=0):
+    def predict(self, input_pattern, max_steps=100, tolerance=0, mode='sync'):
+        """ Predicts the stable pattern for a given input.
 
+        Args:
+            input_pattern (array-like): Given pattern to start prediction
+            max_steps (int, optional): Max num of iterations. Defaults to 100.
+            tolerance (int, optional): Energy change threshold for convergence. Defaults to 0.
+            mode (str, optional): Update mode. Defaults to 'sync'.
+
+        Raises:
+            ValueError: When mode is not 'sync' or 'async'
+
+        Returns:
+            numpy.ndarray: Predicted stable pattern after convergence (or the max steps).
+        """
         pattern = np.array(input_pattern)
         prev_energy = self.energy(pattern)
 
         # until it converges (unless it hits 100 times)
         for step in range(max_steps):
-            for i in range(self.size): # for each neurons
-                raw_value = np.dot(self.weights[i], pattern)
-                pattern[i] = self.sign(raw_value)
+            # calculate everything, then update at once
+            if mode == 'sync':
+                updated_pattern = pattern.copy()
+
+                for i in range(self.size): # for each neurons
+                    raw_value = np.dot(self.weights[i], pattern)
+                    pattern[i] = self.sign(raw_value)
+
+                pattern = updated_pattern
+
+            # update each neurons one by one
+            elif mode == 'async':
+                for i in range(self.size):
+                    raw_value = np.dot(self.weights[i], pattern)
+                    pattern[i] = self.sign(raw_value)
+            
+            else:
+                raise ValueError("Invalid mode: Choose 'sync' or 'async'")
             
             # calculate the energy again after the update
             curr_energy = self.energy(pattern)
