@@ -34,7 +34,7 @@ class HopfieldNetwork:
         np.fill_diagonal(self.weights, 0) # w_{ii} = 0
 
         # normalization step => bc we keep adding the outer product
-        self.weights /= (len(patterns) * self.size)
+        self.weights /= self.size
     
 
     def sign(self, x):
@@ -86,6 +86,8 @@ class HopfieldNetwork:
         pattern = np.array(input_pattern)
         prev_energy = self.energy(pattern)
 
+        print("pattern", pattern)
+
         # until it converges (unless it hits 100 times)
         for step in range(max_steps):
             # calculate everything, then update at once
@@ -94,7 +96,9 @@ class HopfieldNetwork:
 
                 for i in range(self.size): # for each neurons
                     raw_value = np.dot(self.weights[i], pattern)
-                    pattern[i] = self.sign(raw_value)
+                    print(self.weights[i])
+                    print(raw_value)
+                    updated_pattern[i] = self.sign(raw_value)
 
                 pattern = updated_pattern
 
@@ -112,8 +116,6 @@ class HopfieldNetwork:
 
             if abs(curr_energy - prev_energy) <= tolerance:
                 print(f"Converged after {step + 1} steps with energy {curr_energy}.")
-                print(curr_energy)
-                print(prev_energy)
                 break
         
             prev_energy = curr_energy
