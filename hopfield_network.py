@@ -112,6 +112,8 @@ class HopfieldNetwork:
 
             if abs(curr_energy - prev_energy) <= tolerance:
                 print(f"Converged after {step + 1} steps with energy {curr_energy}.")
+                print(curr_energy)
+                print(prev_energy)
                 break
         
             prev_energy = curr_energy
