@@ -37,7 +37,7 @@ class HopfieldNetwork:
         self.weights /= self.size
     
 
-    def sign(self, x):
+    def sign(self, x, threshold=0.5):
         """ Activation Function, updates the neuron's state.
 
         Args:
@@ -47,7 +47,7 @@ class HopfieldNetwork:
             numpy.ndarray or int: Transformed input where each element is -1 or 1. Returns a single int if input is a scaler.
         """
         # ternery => convert nums to bipolar
-        return np.where(x >= 0, 1, -1)
+        return np.where(x > threshold, 1, -1)
     
 
     def energy(self, pattern):
@@ -86,8 +86,6 @@ class HopfieldNetwork:
         pattern = np.array(input_pattern)
         prev_energy = self.energy(pattern)
 
-        print("pattern", pattern)
-
         # until it converges (unless it hits 100 times)
         for step in range(max_steps):
             # calculate everything, then update at once
@@ -96,8 +94,6 @@ class HopfieldNetwork:
 
                 for i in range(self.size): # for each neurons
                     raw_value = np.dot(self.weights[i], pattern)
-                    print(self.weights[i])
-                    print(raw_value)
                     updated_pattern[i] = self.sign(raw_value)
 
                 pattern = updated_pattern
