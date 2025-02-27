@@ -17,14 +17,20 @@ def pattern_gen(n=network_size):
     return np.random.choice([-1, 1], size=n)
 
 
-def sync_testing(test_pattern):
+def sync_testing(test_pattern=None):
+    if (test_pattern is None):
+        test_pattern = pattern_gen()
+
     print(f"Input Pattern: {test_pattern}\n")
     
     predicted_sync = hnet.predict(test_pattern, mode='sync')
     print(f"Predicted Pattern (sync): {predicted_sync}\n\n")
 
 
-def async_testing(test_pattern):
+def async_testing(test_pattern=None):
+    if (test_pattern is None):
+        test_pattern = pattern_gen()
+
     print(f"Input Pattern: {test_pattern}\n")
     
     predicted_async = hnet.predict(test_pattern, mode='async')
@@ -32,7 +38,7 @@ def async_testing(test_pattern):
 
 
 def testing(fn, n):
-    [fn(pattern_gen()) for _ in range(n)]
+    [fn() for _ in range(n)]
 
 
 testing(sync_testing, 5)
