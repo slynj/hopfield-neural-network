@@ -1,14 +1,13 @@
 import numpy as np
+from tqdm import tqdm
 
 class HopfieldNetwork:
-    def __init__(self, size):
-        """ Init weight matrix.
-
-        Args:
-            size (int): # of neurons in the network. Determines the dimension of the weight matrix.
-        """
-        self.size = size
-        self.weights = np.zeros((size, size))
+    def __init__(self):
+        self.num_neuron = 0
+        self.W = np.array([0])
+        self.iteration = 0
+        self.threshold = 0
+        self.mode = 'Null'
     
 
     def train(self, patterns):
@@ -19,38 +18,51 @@ class HopfieldNetwork:
             is 0, and the matrix is normalized.
 
         Args:
-            patterns (array-like): A list or array of patterns for training. Pattern should be
-            a array-like struct (list, numpy array, etc) with bipolar values corresponding to
-            neuron states.
+            patterns (numpy.ndarray): An array of patterns for training. Pattern should be
+            a numpy.ndarray with bipolar values corresponding to neuron states.
         """
-        for p in patterns:
-            p = np.array(p)
-            # computes the outer product of vector p and p
-            #  => outer product of 2 vectors = a * b transposed
-            #  => square matrix, each elem is the product of 2 elements from p
-            #     outerP[i][j] = p[i] * p[j]
-            self.weights += np.outer(p, p)
+        print("Training Patterns ... ")
+
+        num_data = len(patterns)
+        self.num_neuron = patterns[0].shape[0]
+
+        # weight init
+        weights = np.zeros((self.num_neuron, self.num_neuron))
+        # avg neuron value used for stable training
+        #  => subtracting rho from the data prevents values from leaning towards -1 or 1
+        #  => if there's a pattern with all 1s, it's too strong so the result might always
+        #     lead to that pattern even though there are other patterns. so it's more stable
+        #     to subtract the avg neuron value = rho
+        rho = np.sum([np.sum(p) for p in patterns] / (num_data * self.num_neuron)) 
+
+        # hebbian learning rule
+        for i in tqdm(range(num_data)):
+            p = patterns[i] - rho
+            weights += np.outer(p, p)
         
-        np.fill_diagonal(self.weights, 0) # w_{ii} = 0
+        # w_{ii} = 0
+        np.fill_diagonal(weights, 0)
 
         # normalization step => bc we keep adding the outer product
-        self.weights /= self.size
+        weights /= num_data
+
+        self.W = weights
     
 
-    def sign(self, x, threshold=0.5):
-        """ Activation Function, updates the neuron's state.
+    # def sign(self, x, threshold=0.5):
+    #     """ Activation Function, updates the neuron's state.
 
-        Args:
-            x (numpy.ndarray or float): Input value or array of values to be transformed.
+    #     Args:
+    #         x (numpy.ndarray or float): Input value or array of values to be transformed.
 
-        Returns:
-            numpy.ndarray or int: Transformed input where each element is -1 or 1. Returns a single int if input is a scaler.
-        """
-        # ternery => convert nums to bipolar
-        return np.where(x > threshold, 1, -1)
+    #     Returns:
+    #         numpy.ndarray or int: Transformed input where each element is -1 or 1. Returns a single int if input is a scaler.
+    #     """
+    #     # ternery => convert nums to bipolar
+    #     return np.where(x > threshold, 1, -1)
     
 
-    def energy(self, pattern):
+    def energy(self, s):
         """ Calculates the energy of the given pattern based on the current weight matrix.
 
             The energy function is defined as:
@@ -65,10 +77,14 @@ class HopfieldNetwork:
             float: The calcualted energy of the given pattern.
         """
         # pattern.T is pattern tansposed
-        return -0.5 * np.dot(pattern.T, np.dot(self.weights, pattern))
+        # return -0.5 * np.dot(pattern.T, np.dot(self.W, pattern))
+
+        # (-1/2) * s^T * W * s: 
+        return -0.5 * s @ self.W @ s + np.sum(s * self.threshold)
+
     
 
-    def predict(self, input_pattern, max_steps=100, tolerance=0, mode='sync'):
+    def predict(self, input_pattern, iteration=20, threshold=0, mode='sync'):
         """ Predicts the stable pattern for a given input.
 
         Args:
@@ -83,6 +99,30 @@ class HopfieldNetwork:
         Returns:
             numpy.ndarray: Predicted stable pattern after convergence (or the max steps).
         """
+        print("Predicting Pattern ... ")
+        
+        self.iteration = iteration
+        self.threshold = threshold
+        self.mode = mode
+
+        # copy to avoid call by ref
+        cp_input = np.copy(input_pattern)
+
+        # predicted list
+        predicted = []
+
+        for i in tqdm(range(len(cp_input))):
+            predicted.append(self._run(cp_input[i]))
+        
+        return predicted
+    
+    
+    def _run(self, initial):
+        # synchronous update
+        if self.mode == 'sync':
+            s = initial
+            e = self.energy(s)
+
         pattern = np.array(input_pattern)
         prev_energy = self.energy(pattern)
 
@@ -93,7 +133,7 @@ class HopfieldNetwork:
                 updated_pattern = pattern.copy()
 
                 for i in range(self.size): # for each neurons
-                    raw_value = np.dot(self.weights[i], pattern)
+                    raw_value = np.dot(self.W[i], pattern)
                     updated_pattern[i] = self.sign(raw_value)
 
                 pattern = updated_pattern
@@ -101,7 +141,7 @@ class HopfieldNetwork:
             # update each neurons one by one
             elif mode == 'async':
                 for i in range(self.size):
-                    raw_value = np.dot(self.weights[i], pattern)
+                    raw_value = np.dot(self.W[i], pattern)
                     pattern[i] = self.sign(raw_value)
             
             else:
@@ -115,5 +155,6 @@ class HopfieldNetwork:
                 break
         
             prev_energy = curr_energy
+
 
         return pattern
