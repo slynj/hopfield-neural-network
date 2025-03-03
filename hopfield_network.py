@@ -49,19 +49,6 @@ class HopfieldNetwork:
         self.W = weights
     
 
-    # def sign(self, x, threshold=0.5):
-    #     """ Activation Function, updates the neuron's state.
-
-    #     Args:
-    #         x (numpy.ndarray or float): Input value or array of values to be transformed.
-
-    #     Returns:
-    #         numpy.ndarray or int: Transformed input where each element is -1 or 1. Returns a single int if input is a scaler.
-    #     """
-    #     # ternery => convert nums to bipolar
-    #     return np.where(x > threshold, 1, -1)
-    
-
     def energy(self, s):
         """ Calculates the energy of the given pattern based on the current weight matrix.
 
@@ -71,7 +58,7 @@ class HopfieldNetwork:
             Lower energy => stable states.
 
         Args:
-            pattern (numpy.ndarray): 1D numpy array represneting the state of the neurons.
+            s (numpy.ndarray): 1D numpy array represneting the state of the neurons.
 
         Returns:
             float: The calcualted energy of the given pattern.
@@ -79,16 +66,14 @@ class HopfieldNetwork:
         # (-1/2) * s^T * W * s: 
         # same as: -0.5 * np.dot(np.dot(s, self.W), s) + np.sum(s * self.threshold)
         return -0.5 * s @ self.W @ s + np.sum(s * self.threshold)
-
-
     
 
     def predict(self, input_pattern, iteration=20, threshold=0, mode='sync'):
         """ Predicts the stable pattern for a given input.
 
         Args:
-            input_pattern (array-like): Given pattern to start prediction
-            max_steps (int, optional): Max num of iterations. Defaults to 100.
+            input_pattern (numpy.ndarray): Given pattern to start prediction
+            iteration (int, optional): Max num of iterations. Defaults to 20.
             tolerance (int, optional): Energy change threshold for convergence. Defaults to 0.
             mode (str, optional): Update mode. Defaults to 'sync'.
 
@@ -96,7 +81,7 @@ class HopfieldNetwork:
             ValueError: When mode is not 'sync' or 'async'
 
         Returns:
-            numpy.ndarray: Predicted stable pattern after convergence (or the max steps).
+            numpy.ndarray: Predicted stable pattern after convergence (or the iteration).
         """
         print("Predicting Pattern ... ")
         
@@ -130,6 +115,7 @@ class HopfieldNetwork:
                 s = np.sign((self.W @ s) - self.threshold) # np.sign => sign
                 e_updated = self.energy(s)
 
+                # state converged
                 if e == e_updated:
                     return s
                 
