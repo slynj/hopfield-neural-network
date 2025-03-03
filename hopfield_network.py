@@ -118,49 +118,50 @@ class HopfieldNetwork:
     
     def _run(self, initial):
         # synchronous update
+        #  => update neuron state all at once
         if self.mode == 'sync':
             # init state and energy
             s = initial
             e = self.energy(s)
         
-        # iteration
-        for i in range(self.iteration):
-            # update state and energy calc with new states
-            s = np.sign((self.W @ s) - self.threshold) # np.sign => sign
+            # iteration
+            for i in range(self.iteration):
+                # update state and energy calc with new states
+                s = np.sign((self.W @ s) - self.threshold) # np.sign => sign
+                e_updated = self.energy(s)
+
+                if e == e_updated:
+                    return s
+                
+                e = e_updated
+
+            return s
+
+        # asynchronous update
+        #  => one neuron at a time, randomly
+        #  => slower
+        elif self.mode == 'async':
+            s = initial
+            e = self.energy(s)
+
+            for i in range(self.iteration):
+                for j in range(100):
+                    # select random neuron
+                    index = np.random.randint(0, self.num_neuron)
+                    # update state
+                    s[index] = np.sign((self.W[index].T @ s) - self.threshold)
+
+                # update state energy
+                e_updated = self.energy(s)
+
+                # state converged
+                if e == e_updated:
+                    return s
+                
+                e = e_updated
             
+            return s
 
-        pattern = np.array(input_pattern)
-        prev_energy = self.energy(pattern)
-
-        # until it converges (unless it hits 100 times)
-        for step in range(max_steps):
-            # calculate everything, then update at once
-            if mode == 'sync':
-                updated_pattern = pattern.copy()
-
-                for i in range(self.size): # for each neurons
-                    raw_value = np.dot(self.W[i], pattern)
-                    updated_pattern[i] = self.sign(raw_value)
-
-                pattern = updated_pattern
-
-            # update each neurons one by one
-            elif mode == 'async':
-                for i in range(self.size):
-                    raw_value = np.dot(self.W[i], pattern)
-                    pattern[i] = self.sign(raw_value)
-            
-            else:
-                raise ValueError("Invalid mode: Choose 'sync' or 'async'")
-            
-            # calculate the energy again after the update
-            curr_energy = self.energy(pattern)
-
-            if abs(curr_energy - prev_energy) <= tolerance:
-                print(f"Converged after {step + 1} steps with energy {curr_energy}.")
-                break
-        
-            prev_energy = curr_energy
-
-
-        return pattern
+        # invalid mode
+        else:
+            raise ValueError("Invalid mode: Choose 'sync' or 'async'")
