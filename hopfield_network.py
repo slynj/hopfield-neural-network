@@ -76,11 +76,10 @@ class HopfieldNetwork:
         Returns:
             float: The calcualted energy of the given pattern.
         """
-        # pattern.T is pattern tansposed
-        # return -0.5 * np.dot(pattern.T, np.dot(self.W, pattern))
-
         # (-1/2) * s^T * W * s: 
+        # same as: -0.5 * np.dot(np.dot(s, self.W), s) + np.sum(s * self.threshold)
         return -0.5 * s @ self.W @ s + np.sum(s * self.threshold)
+
 
     
 
@@ -120,8 +119,15 @@ class HopfieldNetwork:
     def _run(self, initial):
         # synchronous update
         if self.mode == 'sync':
+            # init state and energy
             s = initial
             e = self.energy(s)
+        
+        # iteration
+        for i in range(self.iteration):
+            # update state and energy calc with new states
+            s = np.sign((self.W @ s) - self.threshold) # np.sign => sign
+            
 
         pattern = np.array(input_pattern)
         prev_energy = self.energy(pattern)
