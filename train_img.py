@@ -56,7 +56,7 @@ def img_corrupted(input, level):
     return corrupted
 
 
-def reshape(data):
+def reshape_sq(data):
     """ Reshpae 1D data to square matrix.
 
     Args:
@@ -68,4 +68,5 @@ def reshape(data):
     dimension = int(np.sqrt(len(data)))
     data = np.reshape(data, (dimension, dimension))
     return data
+
 
