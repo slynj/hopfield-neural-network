@@ -53,7 +53,7 @@ class HopfieldNetwork:
         """ Calculates the energy of the given pattern based on the current weight matrix.
 
             The energy function is defined as:
-                E = -0.5 * s^T (W * s)
+                E = -0.5 * s^T * W * s
             
             Lower energy => stable states.
 
@@ -65,7 +65,7 @@ class HopfieldNetwork:
         """
         # (-1/2) * s^T * W * s: 
         # same as: -0.5 * np.dot(np.dot(s, self.W), s) + np.sum(s * self.threshold)
-        return -0.5 * s @ self.W @ s + np.sum(s * self.threshold)
+        return -0.5 * (s @ self.W @ s) + np.sum(s * self.threshold)
     
 
     def predict(self, input_pattern, iteration=20, threshold=0, mode='sync'):
