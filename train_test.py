@@ -2,14 +2,14 @@ import numpy as np
 from hopfield_network import HopfieldNetwork
 
 network_size = 5
-hnet = HopfieldNetwork(network_size)
+hnet = HopfieldNetwork()
 
 patterns = [
     [1, -1, 1, -1, 1],
     [-1, 1, -1, 1, -1]
 ]
 
-hnet.train(np.ndarray(patterns))
+hnet.train(np.array(patterns))
 print("Training Completed.\n")
 
 
