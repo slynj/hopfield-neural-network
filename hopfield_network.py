@@ -69,19 +69,17 @@ class HopfieldNetwork:
     
 
     def predict(self, input_pattern, iteration=20, threshold=0, mode='sync'):
-        """ Predicts the stable pattern for a given input.
+        """ Predicts the stable pattern for a given input. Given the input matrix, 
+            returns the predicted matrix.
 
         Args:
-            input_pattern (numpy.ndarray): Given pattern to start prediction
+            input_pattern (numpy.ndarray, more than 1D): Given pattern to start prediction
             iteration (int, optional): Max num of iterations. Defaults to 20.
             tolerance (int, optional): Energy change threshold for convergence. Defaults to 0.
             mode (str, optional): Update mode. Defaults to 'sync'.
 
-        Raises:
-            ValueError: When mode is not 'sync' or 'async'
-
         Returns:
-            numpy.ndarray: Predicted stable pattern after convergence (or the iteration).
+            array of numpy.ndarrays: Predicted stable pattern after convergence (or the iteration).
         """
         print("Predicting Pattern ... ")
         
@@ -102,6 +100,17 @@ class HopfieldNetwork:
     
     
     def _run(self, initial):
+        """ Calculates each of the predicted pattern.
+
+        Args:
+            initial (numpy.ndarray): 1D array representing the initial state
+
+        Raises:
+            ValueError: When mode is not 'sync' or 'async'
+
+        Returns:
+            numpy.ndarray: 1D array representing the updated state
+        """
         # synchronous update
         #  => update neuron state all at once
         if self.mode == 'sync':
