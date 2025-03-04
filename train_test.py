@@ -9,7 +9,7 @@ patterns = [
     [-1, 1, -1, 1, -1]
 ]
 
-hnet.train(patterns)
+hnet.train(np.ndarray(patterns))
 print("Training Completed.\n")
 
 
