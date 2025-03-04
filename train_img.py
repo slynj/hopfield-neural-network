@@ -20,8 +20,15 @@ def img_preprocessing(path, w=128, h=128):
     Returns:
         numpy.ndarray: 1D array with the length w * h. 
     """
+    
+
     # convert img
     img = skimage.io.imread(path)
+
+    # check if if it has 4 channels (rgba) => set to rgb
+    if img.shape[-1] >= 3:
+        img = img[:, :, :3]
+
     img_bw = skimage.color.rgb2gray(img)
     img_resize = skimage.transform.resize(img_bw, (w, h), mode='reflect')
 
@@ -84,13 +91,13 @@ def plot(data, test, predicted, figsize=(5, 6)):
             grid_fig[i, 1].set_title("Input Data")
             grid_fig[i, 2].set_title("Output Data")
 
-        grid_fig[i, 0].imshow(data[i])
+        grid_fig[i, 0].imshow(data[i], cmap='gray')
         grid_fig[i, 0].axis("off")
 
-        grid_fig[i, 1].imshow(test[i])
+        grid_fig[i, 1].imshow(test[i], cmap='gray')
         grid_fig[i, 1].axis("off")
 
-        grid_fig[i, 2].imshow(predicted[i])
+        grid_fig[i, 2].imshow(predicted[i], cmap='gray')
         grid_fig[i, 2].axis("off")
 
     plt.tight_layout()
@@ -102,8 +109,9 @@ def main():
     # load imgs
     oikawa = "train_img/oikawa.jpeg"
     gojo = "train_img/gojo.webp"
+    sjs = "train_img/sjs.png"
 
-    data = [oikawa, gojo]
+    data = [oikawa, gojo, sjs]
 
     # preprocessing
     print("Data Processing ...")
@@ -114,7 +122,7 @@ def main():
     hnet.train(data)
 
     # generate test
-    test = [img_corrupted(d, 0.3) for d in data]
+    test = [img_corrupted(d, 0.4) for d in data]
     
     # get result
     predicted = hnet.predict(test)
