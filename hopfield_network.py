@@ -33,7 +33,7 @@ class HopfieldNetwork:
         #  => if there's a pattern with all 1s, it's too strong so the result might always
         #     lead to that pattern even though there are other patterns. so it's more stable
         #     to subtract the avg neuron value = rho
-        rho = np.sum([np.sum(p) for p in patterns] / (num_data * self.num_neuron)) 
+        rho = np.sum([np.sum(p) for p in patterns]) / (num_data * self.num_neuron)
 
         # hebbian learning rule
         for i in tqdm(range(num_data)):
