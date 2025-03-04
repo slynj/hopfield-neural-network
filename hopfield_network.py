@@ -109,7 +109,7 @@ class HopfieldNetwork:
             ValueError: When mode is not 'sync' or 'async'
 
         Returns:
-            numpy.ndarray: 1D array representing the updated state
+            numpy.ndarray: 1D array representing the initial state
         """
         # synchronous update
         #  => update neuron state all at once
