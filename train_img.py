@@ -78,6 +78,15 @@ def reshape_sq(arr):
 
 
 def plot(data, test, predicted, figsize=(5, 6)):
+    """ Plots the train, test, predicted data (img).
+
+    Args:
+        data (array of arrays): Array of numpy.ndarray (1D) or any other 
+                                array like types. Storing train data.
+        test (array of arrays): Same thing, storing corrupted data.
+        predicted (array of arrays): Same thing, storing predicted data.
+        figsize (tuple, optional): Final result figure size. Defaults to (5, 6).
+    """
     data = [reshape_sq(d) for d in data]
     test = [reshape_sq(t) for t in test]
     predicted = [reshape_sq(p) for p in predicted]
