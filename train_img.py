@@ -56,17 +56,72 @@ def img_corrupted(input, level):
     return corrupted
 
 
-def reshape_sq(data):
+def reshape_sq(arr):
     """ Reshpae 1D data to square matrix.
 
     Args:
-        data (array): 1D array.
+        arr (array): 1D array.
 
     Returns:
         numpy.ndarray: Square matrix.
     """
-    dimension = int(np.sqrt(len(data)))
-    data = np.reshape(data, (dimension, dimension))
-    return data
+    dimension = int(np.sqrt(len(arr)))
+    arr = np.reshape(arr, (dimension, dimension))
+    return arr
 
 
+def plot(data, test, predicted, figsize=(5, 6)):
+    data = [reshape_sq(d) for d in data]
+    test = [reshape_sq(t) for t in test]
+    predicted = [reshape_sq(p) for p in predicted]
+
+    fig, grid_fig = plt.subplots(len(data), 3, figsize=figsize)
+
+    # only works when there are 1+ images in data (fix later!)
+    for i in range(len(data)):
+        if i == 0:
+            grid_fig[i, 0].set_title("Train Data")
+            grid_fig[i, 1].set_title("Input Data")
+            grid_fig[i, 2].set_title("Output Data")
+
+        grid_fig[i, 0].imshow(data[i])
+        grid_fig[i, 0].axis("off")
+
+        grid_fig[i, 1].imshow(test[i])
+        grid_fig[i, 1].axis("off")
+
+        grid_fig[i, 2].imshow(predicted[i])
+        grid_fig[i, 2].axis("off")
+
+    plt.tight_layout()
+    plt.savefig("result/result.png")
+    plt.show()
+
+
+def main():
+    # load imgs
+    oikawa = "train_img/oikawa.jpeg"
+    gojo = "train_img/gojo.webp"
+
+    data = [oikawa, gojo]
+
+    # preprocessing
+    print("Data Processing ...")
+    data = [img_preprocessing(d) for d in data] # now a list of numpy arrays
+
+    # network model
+    hnet = HopfieldNetwork()
+    hnet.train(data)
+
+    # generate test
+    test = [img_corrupted(d, 0.3) for d in data]
+    
+    # get result
+    predicted = hnet.predict(test)
+
+    print("Show Prediction Results ...")
+    plot(data, test, predicted)
+
+
+if __name__ == '__main__':
+    main()
