@@ -2,6 +2,11 @@ import numpy as np
 from tabulate import tabulate
 from hopfield_network import HopfieldNetwork
 
+'''
+Simple test train for better understnading hopfield neural network implemented
+
+'''
+
 network_size = 5
 hnet = HopfieldNetwork()
 
