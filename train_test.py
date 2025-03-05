@@ -27,22 +27,22 @@ def sync_testing(test_pattern=None):
     if (test_pattern is None):
         test_pattern = pattern_gen()
 
-    print(f"Input Pattern:\n{tabulate(test_pattern, tablefmt="grid")}\n")
+    print(f"Input Patterns:\n{tabulate(test_pattern, tablefmt="grid")}\n")
     
     predicted_sync = hnet.predict(test_pattern, mode='sync')
-    print(f"\nTrained Pattern:\n{tabulate(patterns, tablefmt="heavy_grid")}\n")
-    print(f"Predicted Pattern (sync): \n{tabulate(predicted_sync, tablefmt="fancy_grid")}\n\n")
+    print(f"\nTrained Patterns:\n{tabulate(patterns, tablefmt="heavy_grid")}\n")
+    print(f"Predicted Patterns (sync): \n{tabulate(predicted_sync, tablefmt="fancy_grid")}\n\n")
 
 
 def async_testing(test_pattern=None):
     if (test_pattern is None):
         test_pattern = pattern_gen()
 
-    print(f"Input Pattern:\n{tabulate(test_pattern, tablefmt="grid")}\n")
+    print(f"Input Patterns:\n{tabulate(test_pattern, tablefmt="grid")}\n")
     
     predicted_async = hnet.predict(test_pattern, mode='async')
-    print(f"\nTrained Pattern:\n{tabulate(patterns, tablefmt="heavy_grid")}\n")
-    print(f"Predicted Pattern (sync): \n{tabulate(predicted_async, tablefmt="fancy_grid")}\n\n")
+    print(f"\nTrained Patterns:\n{tabulate(patterns, tablefmt="heavy_grid")}\n")
+    print(f"Predicted Patterns (async): \n{tabulate(predicted_async, tablefmt="fancy_grid")}\n\n")
 
 
 
