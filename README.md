@@ -2,6 +2,7 @@
 Python implementation of the Hopfield Neural Network, supporting both asynchronous and synchronous updates.  
 Train the network using either image data (`train_img.py`) or numerical matrix values (`train_test.py`).
 
+<br>
 
 ## Installation
 Python **≥ 3.5** must be installed. You can install all dependencies using:
@@ -9,6 +10,7 @@ Python **≥ 3.5** must be installed. You can install all dependencies using:
 ```bash
 pip install -r requirements.txt
 ```
+<br>
 
 ## Training with Images (`train_img.py`)
 This script trains and tests the Hopfield Network with the image file input.
@@ -44,6 +46,7 @@ Show Prediction Results ...
 
 4. View the result, also saved in `result/result.png`
 
+<br>
 
 ## Training with Matrix Patterns
 This script trains and tests the Hopfield Network with the bipolar matrix input (2D arrays).
@@ -69,10 +72,10 @@ Training Completed.
 
 <br>
 
-Synchornous
+**Synchornous**
 
 ```bash
-Input Pattern:
+Input Patterns:
 +----+----+----+----+----+
 |  1 |  1 |  1 | -1 |  1 |
 +----+----+----+----+----+
@@ -85,17 +88,17 @@ Input Pattern:
 |  1 |  1 |  1 |  1 | -1 |
 +----+----+----+----+----+
 
-Predicting Pattern ... 
+Predicting Patterns ... 
 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00<00:00, 8741.78it/s]
 
-Trained Pattern:
+Trained Patterns:
 ┏━━━━┳━━━━┳━━━━┳━━━━┳━━━━┓
 ┃  1 ┃ -1 ┃  1 ┃ -1 ┃  1 ┃
 ┣━━━━╋━━━━╋━━━━╋━━━━╋━━━━┫
 ┃ -1 ┃  1 ┃ -1 ┃  1 ┃ -1 ┃
 ┗━━━━┻━━━━┻━━━━┻━━━━┻━━━━┛
 
-Predicted Pattern (sync): 
+Predicted Patterns (sync): 
 ╒════╤════╤════╤════╤════╕
 │  1 │ -1 │  1 │ -1 │  1 │
 ├────┼────┼────┼────┼────┤
@@ -111,10 +114,10 @@ Predicted Pattern (sync):
 
 <br>
 
-Asynchornous
+**Asynchornous**
 
 ```bash
-Input Pattern:
+Input Patterns:
 +----+----+----+----+----+
 | -1 |  1 | -1 | -1 |  1 |
 +----+----+----+----+----+
@@ -127,17 +130,17 @@ Input Pattern:
 | -1 | -1 | -1 | -1 |  1 |
 +----+----+----+----+----+
 
-Predicting Pattern ... 
+Predicting Patterns ... 
 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████| 5/5 [00:00<00:00, 2411.07it/s]
 
-Trained Pattern:
+Trained Patterns:
 ┏━━━━┳━━━━┳━━━━┳━━━━┳━━━━┓
 ┃  1 ┃ -1 ┃  1 ┃ -1 ┃  1 ┃
 ┣━━━━╋━━━━╋━━━━╋━━━━╋━━━━┫
 ┃ -1 ┃  1 ┃ -1 ┃  1 ┃ -1 ┃
 ┗━━━━┻━━━━┻━━━━┻━━━━┻━━━━┛
 
-Predicted Pattern (async): 
+Predicted Patterns (async): 
 ╒════╤════╤════╤════╤════╕
 │  1 │ -1 │  1 │ -1 │  1 │
 ├────┼────┼────┼────┼────┤
@@ -150,6 +153,7 @@ Predicted Pattern (async):
 │ -1 │  1 │ -1 │  1 │ -1 │
 ╘════╧════╧════╧════╧════╛
 ```
+<br>
 
 #### Steps to Run
 
