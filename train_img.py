@@ -1,9 +1,14 @@
 import numpy as np
+
+import os
+
 import skimage.io
 import skimage.color
 import skimage.transform
 import skimage.filters
+
 import matplotlib.pyplot as plt
+
 from hopfield_network import HopfieldNetwork
 
 np.random.seed(523)
@@ -115,16 +120,18 @@ def plot(data, test, predicted, figsize=(5, 6)):
 
 
 def main():
-    # load imgs
-    oikawa = "train_img/oikawa.jpeg"
-    gojo = "train_img/gojo.webp"
-    sjs = "train_img/sjs.png"
+    img_dir = "train_img"
+    img_files = [os.path.join(img_dir, f) for f in os.listdir(img_dir) if f.endswith((".jpg", ".jpeg", ".png", ".webp"))]
 
-    data = [oikawa, gojo, sjs]
+    if not img_files:
+        print("No images found in train_img/ folder!")
+        return
+
+    print(f"Found {len(img_files)} images: {img_files}")
 
     # preprocessing
     print("Data Processing ...")
-    data = [img_preprocessing(d) for d in data] # now a list of numpy arrays
+    data = [img_preprocessing(img) for img in img_files] # now a list of numpy arrays
 
     # network model
     hnet = HopfieldNetwork()
